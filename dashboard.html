@@ -1,0 +1,53 @@
+import tkinter as tk
+import requests
+
+class Dashboard:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Driver Dashboard")
+
+        # Create a frame for the driver name label
+        self.driver_name_frame = tk.Frame(self.root)
+        self.driver_name_label = tk.Label(self.driver_name_frame, text="Driver Name:")
+        self.driver_name_label.grid(row=0, column=0)
+
+        # Create a frame for the driver status label
+        self.driver_status_frame = tk.Frame(self.root)
+        self.driver_status_label = tk.Label(self.driver_status_frame, text="Driver Status:")
+        self.driver_status_label.grid(row=0, column=0)
+
+        # Create a frame for the call info label
+        self.call_info_frame = tk.Frame(self.root)
+        self.call_info_label = tk.Label(self.call_info_frame, text="Call Info:")
+        self.call_info_label.grid(row=0, column=0)
+
+        # Make the root window fullscreen
+        self.root.attributes("-fullscreen", True)
+
+        # Get the latest driver information from the Swoop Roadside API
+        self.get_driver_info()
+
+        # Start the mainloop
+        self.root.mainloop()
+
+    def get_driver_info(self):
+        # Replace this with your Swoop Roadside API token
+        api_token = "YOUR_API_TOKEN"
+
+        # Make a request to the Swoop Roadside API to get the latest driver information
+        response = requests.get("https://api.swooproadside.com/v1/drivers", headers={"Authorization": f"Bearer {api_token}"})
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Get the driver information from the response
+            driver_info = response.json()
+
+            # Update the driver name, status, and call info labels on the dashboard
+            self.driver_name_label["text"] = driver_info["name"]
+            self.driver_status_label["text"] = driver_info["status"]
+            self.call_info_label["text"] = driver_info["call_info"]
+        else:
+            print("Error getting driver information:", response.status_code)
+
+if __name__ == "__main__":
+    dashboard = Dashboard()
