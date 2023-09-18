@@ -1,57 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Driver Dashboard</title>
-  <style>
-    body {
-      font-family: sans-serif;
-    }
-
-    .driver-name {
-      font-size: 24px;
-    }
-
-    .driver-status {
-      font-size: 18px;
-    }
-
-    .call-info {
-      font-size: 16px;
-    }
-  </style>
+  <title>Agero Driver Status Dashboard</title>
 </head>
 <body>
-  <h1>Driver Dashboard</h1>
+  <h1>Agero Driver Status Dashboard</h1>
 
-  <p class="driver-name">Driver Name: {{ driver_info.name }}</p>
-  <p class="driver-status">Driver Status: {{ driver_info.status }}</p>
-  <p class="call-info">Call Info: {{ driver_info.call_info }}</p>
+  <?php
+    // Replace this with your Agero API token
+    $api_token = "YOUR_API_TOKEN";
 
-  <script>
-const apiToken = process.env.API_TOKEN;
-    // Fetch the latest driver information from the Swoop Roadside API
-    async function fetchDriverInfo() {
-      const response = await fetch("https://api.swooproadside.com/v1/drivers");
-      const driverInfo = await response.json();
-      return driverInfo;
+    // Make a request to the Agero API to get the latest driver information
+    $response = curl_get("https://api.agero.com/v1/drivers", [
+      "Authorization" => "Bearer $api_token"
+    ]);
+
+    // Check if the request was successful
+    if ($response->status_code == 200) {
+      // Get the driver information from the response
+      $driver_info = $response->json();
+
+      // Display the driver name, status, and call info on the dashboard
+      echo "<h2>Driver Name: $driver_info[name]</h2>";
+      echo "<h2>Driver Status: $driver_info[status]</h2>";
+      echo "<h2>Call Info: $driver_info[call_info]</h2>";
+    } else {
+      echo "Error getting driver information:", $response->status_code;
     }
-
-    // Update the dashboard with the latest driver information
-    async function updateDashboard() {
-      const driverInfo = await fetchDriverInfo();
-
-      const driverNameElement = document.querySelector(".driver-name");
-      driverNameElement.textContent = driverInfo.name;
-
-      const driverStatusElement = document.querySelector(".driver-status");
-      driverStatusElement.textContent = driverInfo.status;
-
-      const callInfoElement = document.querySelector(".call-info");
-      callInfoElement.textContent = driverInfo.call_info;
-    }
-
-    // Update the dashboard every 10 seconds
-    setInterval(updateDashboard, 10000);
-  </script>
+  ?>
 </body>
 </html>
