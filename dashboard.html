@@ -28,6 +28,7 @@
   <p class="call-info">Call Info: {{ driver_info.call_info }}</p>
 
   <script>
+const apiToken = process.env.API_TOKEN;
     // Fetch the latest driver information from the Swoop Roadside API
     async function fetchDriverInfo() {
       const response = await fetch("https://api.swooproadside.com/v1/drivers");
