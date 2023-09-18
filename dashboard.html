@@ -7,26 +7,42 @@
   <h1>Agero Driver Status Dashboard</h1>
 
   <?php
-    // Replace this with your Agero API token
-    $api_token = "YOUR_API_TOKEN";
+    // Replace this with your Agero API login credentials
+    $username = "YOUR_USERNAME";
+    $password = "YOUR_PASSWORD";
 
-    // Make a request to the Agero API to get the latest driver information
-    $response = curl_get("https://api.agero.com/v1/drivers", [
-      "Authorization" => "Bearer $api_token"
+    // Get an access token from the Agero API
+    $response = curl_post("https://api.enterprise.agero.com/v1/auth/login", [
+      "username" => $username,
+      "password" => $password
     ]);
 
     // Check if the request was successful
     if ($response->status_code == 200) {
-      // Get the driver information from the response
-      $driver_info = $response->json();
+      // Get the access token from the response
+      $accessToken = $response->json()["access_token"];
 
-      // Display the driver name, status, and call info on the dashboard
-      echo "<h2>Driver Name: $driver_info[name]</h2>";
-      echo "<h2>Driver Status: $driver_info[status]</h2>";
-      echo "<h2>Call Info: $driver_info[call_info]</h2>";
+      // Make a request to the Agero API to get the latest driver information
+      $response = curl_get("https://api.enterprise.agero.com/v1/drivers", [
+        "Authorization" => "Bearer $accessToken"
+      ]);
+
+      // Check if the request was successful
+      if ($response->status_code == 200) {
+        // Get the driver information from the response
+        $driver_info = $response->json();
+
+        // Display the driver name, status, and call info on the dashboard
+        echo "<h2>Driver Name: $driver_info[name]</h2>";
+        echo "<h2>Driver Status: $driver_info[status]</h2>";
+        echo "<h2>Call Info: $driver_info[call_info]</h2>";
+      } else {
+        echo "Error getting driver information:", $response->status_code;
+      }
     } else {
-      echo "Error getting driver information:", $response->status_code;
+      echo "Error getting access token:", $response->status_code;
     }
+
   ?>
 </body>
 </html>
